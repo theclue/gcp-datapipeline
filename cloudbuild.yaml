@@ -1,0 +1,38 @@
+steps:
+
+- name: gcr.io/cloud-builders/gsutil
+  args: ['-c','cp gs://${_STATE_BUCKET}/keys/*.json.enc .']
+  id: copy keys
+  dir: 'keys'
+
+- name: gcr.io/cloud-builders/gcloud
+  args:
+  - kms
+  - decrypt
+  - --ciphertext-file=terraform_sa.json.enc
+  - --plaintext-file=terraform_sa.json
+  - --location=${_REGION}
+  - --keyring=${_KEYRING}
+  - --key=terraform-key
+  id: decode secret
+  dir: 'keys'
+  waitFor: ['copy keys']
+
+# Refresh base infrastructure
+- name: hashicorp/terraform
+  args: ['init']
+  id: terraform init
+  dir: 'terraform/0-bootstrap'
+  waitFor: ['decode secret']
+
+- name: hashicorp/terraform
+  id: terraform plan
+  args: ['plan', '-auto-approve', '-lock=false']
+  dir: 'terraform/0-bootstrap'
+  waitFor: ['terraform init']
+
+- name: hashicorp/terraform
+  id: terraform-apply
+  args: ['apply', '-auto-approve', '-lock=false']
+  dir: 'terraform/0-bootstrap'
+  waitFor: ['terraform plan']

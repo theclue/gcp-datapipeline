@@ -1,0 +1,7 @@
+terraform {
+  backend "gcs" {
+    bucket  	= CHANGEME
+    prefix  	= "terraform/state"
+    credentials = file("../../keys/terraform_sa.json")
+  }
+}
