@@ -22,7 +22,7 @@
 
 /******************************************
  General
-*******************************************/ 
+ ******************************************/ 
 
 output "project_id" {
   description = "The GCP project where the resources have been deployed."
@@ -36,7 +36,7 @@ output "region" {
 
 /******************************************
   Service Account
-*******************************************/
+ ******************************************/
 
 output "terraform_sa_email" {
   description = "Email for privileged service account for Terraform."
@@ -51,11 +51,12 @@ output "terraform_sa_name" {
 output "terraform_sa_key" {
   description = "JSON key used with Terraform Service Account."
   value = base64decode(google_service_account_key.terraform_sa_key.private_key)
+  sensitive = true
 }
 
 /******************************************
   GCS Terraform Storage Buckets
-*******************************************/
+ ******************************************/
 
 output "tfstate_bucket" {
   description = "Bucket used to store Terraform state."
@@ -64,7 +65,7 @@ output "tfstate_bucket" {
 
 /******************************************
   Keyring
-*******************************************/
+ ******************************************/
 
 output "keyring" {
   description = "The name of the keyring."
