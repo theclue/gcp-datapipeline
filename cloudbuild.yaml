@@ -14,7 +14,7 @@ steps:
 
 - name: hashicorp/terraform
   id: bootstrap plan
-  args: ['plan', '-auto-approve', '-lock=false']
+  args: ['plan', '-lock=false']
   dir: 'terraform/0-bootstrap'
   waitFor: ['bootstrap init']
 

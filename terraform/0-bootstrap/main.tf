@@ -110,12 +110,46 @@ resource "google_cloudbuild_trigger" "main_trigger" {
 
   filename 		= "cloudbuild.yaml"
 
+  /**
+   * Activate triggers only on fork repositories
+   */
+  disabled		= var.repo_name == "gcp-datapipeline" ? true : false
+
   github {
   	owner 	 	= var.repo_owner
   	name     	= var.repo_name
 
   	push {
   		branch		= "^main$"
+  	}
+  }
+
+  substitutions = {
+    _REGION       		  = var.region
+    _TF_SA_EMAIL          = google_service_account.terraform_sa.email
+    _STATE_BUCKET         = google_storage_bucket.terraform_state.name
+    _KEYRING			  = module.kms.keyring_resource.name
+  }
+}
+
+resource "google_cloudbuild_trigger" "develop_trigger" {
+  project     	= var.project_id
+  name  		= "terraform-plan"
+  description 	= "This trigger will just plan terraform resources to current project"
+
+  filename 		= "dev_cloudbuild.yaml"
+
+  /**
+   * Activate triggers only on fork repositories
+   */
+  disabled		= var.repo_name == "gcp-datapipeline" ? true : false
+
+  github {
+  	owner 	 	= var.repo_owner
+  	name     	= var.repo_name
+
+  	push {
+  		branch		= "^develop$"
   	}
   }
 
