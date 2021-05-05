@@ -1,7 +1,7 @@
 steps:
 
 - name: gcr.io/cloud-builders/gsutil
-  args: ['-c','cp gs://${_STATE_BUCKET}/keys/*.json .']
+  args: ['cp gs://${_STATE_BUCKET}/keys/*.json .']
   id: copy keys
   dir: 'keys'
 
