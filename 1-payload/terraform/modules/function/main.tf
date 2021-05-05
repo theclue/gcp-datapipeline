@@ -21,7 +21,7 @@
  */
 
 locals {
-  bucket_name       = var.random_suffix == true ? format("%s-%s-%s", var.project_id, var.function_name, "code",  random_id.suffix.hex) : format("%s-%s-%s", var.project_id, var.function_name, "code")
+  bucket_name       = var.suffix != "" ? format("%s-%s-%s", var.project, var.function_name, "code",  var.suffix) : format("%s-%s-%s", var.project, var.function_name, "code")
   timestamp = formatdate("YYMMDDhhmmss", timestamp())
 	root_dir = abspath("../")
 }
@@ -51,7 +51,7 @@ resource "google_storage_bucket" "function_bucket" {
 resource "google_storage_bucket_object" "zip" {
   # Append file MD5 to force bucket to be recreated
   name   = "source.zip#${data.archive_file.source.output_md5}"
-  bucket = google_storage_bucket.bucket.name
+  bucket = google_storage_bucket.function_bucket.name
   source = data.archive_file.source.output_path
 }
 

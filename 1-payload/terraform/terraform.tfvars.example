@@ -6,3 +6,5 @@ random_suffix	= true
 
 project_number	= CHANGEME
 
+terraform_sa_email = "CHANGEME"
+
