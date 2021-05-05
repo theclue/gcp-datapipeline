@@ -31,10 +31,10 @@ override.tf.json
 # Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
 # example: *tfplan*
 
-# Ignore actual files
-terraform.tfvars
-backend.tf
-
 # Ignore keys
 *.json
 *.json.enc
+
+# Comment these in your forked repository
+terraform.tfvars
+backend.tf

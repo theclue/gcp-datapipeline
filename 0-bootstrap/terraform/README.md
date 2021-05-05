@@ -28,7 +28,7 @@ Don't forget to authenticate with a Google Cloud account which has at least the 
 
 ## Quick start
 
-1. Fork this repository and rename it.
+1. Fork this repository and rename it. Edit the root `.gitignore` file and comment the last two lines.
 	* If you _don't_ rename the repository, Cloud Build triggers will be created in a _disabled_ state. Use this repository just as a template!
 2. Go into terraform directory
 	> `cd terraform`
