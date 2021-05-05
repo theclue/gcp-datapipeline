@@ -29,6 +29,15 @@ resource "random_id" "suffix" {
   byte_length = 4
 }
 
+# Enable Cloud Build API
+resource "google_project_service" "cb_api" {
+  project = var.project_id
+  service = "cloudbuild.googleapis.com"
+
+  disable_dependent_services = true
+  disable_on_destroy         = false
+}
+
 /***********************************************
   Service account for Terraform
  ***********************************************/
