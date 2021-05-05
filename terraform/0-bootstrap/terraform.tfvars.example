@@ -1,7 +1,13 @@
-project_id 		= CHANGEME
+project_id 		= "CHANGEME"
 
 region		 	= "europe-west1"
 
 random_suffix	= true
+
+project_number	= CHANGEME
+
+repo_owner		= "CHANGEME"
+
+repo_name		= "CHANGEME"
 
 

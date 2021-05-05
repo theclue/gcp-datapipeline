@@ -44,20 +44,6 @@ resource "google_service_account_key" "terraform_sa_key" {
 }
 
 /***********************************************
-  GCS Bucket for Terraform
- ***********************************************/
-
-resource "google_storage_bucket" "terraform_state" {
-  project                     = var.project_id
-  name                        = local.bucket_name
-  location                    = var.region
-  uniform_bucket_level_access = true
-  versioning {
-    enabled = true
-  }
-}
-
-/***********************************************
   Permissions for Terraform.
  ***********************************************/
 
@@ -80,25 +66,102 @@ module "kms" {
   keyring            = local.keyring_name
   keys               = ["terraform-key"]
   set_owners_for     = ["terraform-key"]
+  set_decrypters_for = ["terraform-key"]
+  set_encrypters_for = ["terraform-key"]
   owners = [
     "serviceAccount:${google_service_account.terraform_sa.email}"
+  ]
+  encrypters = [
+    "serviceAccount:service-${var.project_number}@gs-project-accounts.iam.gserviceaccount.com"
+  ]
+  decrypters = [
+    "serviceAccount:service-${var.project_number}@gs-project-accounts.iam.gserviceaccount.com",
+    "serviceAccount:${var.project_number}@cloudbuild.gserviceaccount.com"
   ]
 }
 
 /***********************************************
- * Upload encoded files to GCS
+  GCS Bucket for Terraform
+ ***********************************************/
+
+resource "google_storage_bucket" "terraform_state" {
+  project                     = var.project_id
+  name                        = local.bucket_name
+  location                    = var.region
+  uniform_bucket_level_access = true
+
+  versioning {
+    enabled = true
+  }
+
+  encryption {
+    default_kms_key_name = module.kms.keys["terraform-key"]
+  }
+}
+
+/***********************************************
+ Cloud Build - Main branch triggers
+ ***********************************************/
+
+resource "google_cloudbuild_trigger" "main_trigger" {
+  project     	= var.project_id
+  name  		= "terraform-apply"
+  description 	= "This trigger will apply terraform resources to current project"
+
+  filename 		= "cloudbuild.yaml"
+
+  github {
+  	owner 	 	= var.repo_owner
+  	name     	= var.repo_name
+
+  	push {
+  		branch		= "^main$"
+  	}
+  }
+
+  substitutions = {
+    _REGION       		  = var.region
+    _TF_SA_EMAIL          = google_service_account.terraform_sa.email
+    _STATE_BUCKET         = google_storage_bucket.terraform_state.name
+    _KEYRING			  = module.kms.keyring_resource.name
+  }
+}
+
+/***********************************************
+  Cloud Build - IAM
+ ***********************************************/
+
+resource "google_service_account_iam_member" "cloudbuild_terraform_sa_impersonate_permissions" {
+
+  service_account_id = google_service_account.terraform_sa.name
+  role               = "roles/iam.serviceAccountTokenCreator"
+  member             = "serviceAccount:${var.project_number}@cloudbuild.gserviceaccount.com"
+}
+
+
+# Required to allow cloud build to access state with impersonation.
+resource "google_storage_bucket_iam_member" "cloudbuild_state_iam" {
+
+  bucket = google_storage_bucket.terraform_state.name
+  role   = "roles/storage.admin"
+  member = "serviceAccount:${var.project_number}@cloudbuild.gserviceaccount.com"
+}
+
+/***********************************************
+ * Upload Terraform key file to GCS
  ***********************************************/
 
 resource "null_resource" "upload_encoded_keys" {
 
  triggers = {
    file_hashes = jsonencode({
-   for fn in fileset(".", "*.json.enc") :
-   fn => filesha256("./${fn}")
+   for fn in fileset("../../keys", "terraform*.json") :
+   fn => filesha256("../../keys/${fn}")
    })
  }
 
  provisioner "local-exec" {
-   command = "gsutil cp -r ./*.json.enc gs://${google_storage_bucket.terraform_state.name}/keys/"
+   command = "gsutil cp -r ../../keys/terraform*.json gs://${google_storage_bucket.terraform_state.name}/keys/"
  }
+
 }

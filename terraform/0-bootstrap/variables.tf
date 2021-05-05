@@ -41,3 +41,21 @@ variable "keyring" {
   type        = string
   default     = ""
 }
+
+variable "project_number" {
+  description = "The unique number of the project in which the resources are created."
+  type        = number
+  default     = 0
+}
+
+variable "repo_owner" {
+  description = "The owner of the Github repo used to trig cloud build."
+  type        = string
+  default     = ""
+}
+
+variable "repo_name" {
+  description = "The name of the Github repo used to trig cloud build"
+  type        = string
+  default     = ""
+}
