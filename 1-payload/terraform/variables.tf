@@ -52,3 +52,7 @@ variable "terraform_sa_email" {
   description = "This is the email associated to the service account used by Terraform."
   type        = string
 }
+
+variable "options" {
+  description = "Options array used to configure and destination resources."
+}

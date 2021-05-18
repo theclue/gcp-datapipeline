@@ -24,6 +24,6 @@ terraform {
   backend "gcs" {
     bucket  	= CHANGEME
     prefix  	= "0-bootstrap/tfstate"
-    credentials = file("../../keys/terraform_sa.json")
+    credentials = "../../keys/terraform_sa.json"
   }
 }

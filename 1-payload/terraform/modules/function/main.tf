@@ -21,7 +21,7 @@
  */
 
 locals {
-  bucket_name       = var.suffix != "" ? format("%s-%s-%s", var.project, var.function_name, "code",  var.suffix) : format("%s-%s-%s", var.project, var.function_name, "code")
+  bucket_name       = var.suffix != "" ? format("%s-%s-%s-%s", var.project, var.function_name, "code",  var.suffix) : format("%s-%s-%s", var.project, var.function_name, "code")
   timestamp = formatdate("YYMMDDhhmmss", timestamp())
 	root_dir = abspath("../")
 }

@@ -1,10 +1,19 @@
-project_id 		= "CHANGEME"
+project_id 				= "CHANGEME"
 
-region		 	= "europe-west1"
+region		 			= "europe-west1"
 
-random_suffix	= true
+random_suffix			= true
 
-project_number	= CHANGEME
+project_number			= CHANGEME
 
-terraform_sa_email = "CHANGEME"
+terraform_sa_email 		= "CHANGEME"
+
+options = {
+	
+	segment = {
+		enable 			= false
+		dataset_name 	= ""
+		bucket_name		= ""
+	}
+}
 
