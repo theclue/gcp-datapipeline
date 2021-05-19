@@ -27,22 +27,3 @@ resource "random_id" "suffix" {
 /***********************************************
   Additional permissions for Terraform SA
  ***********************************************/
-
-resource "google_service_account_iam_member" "cloudbuild_terraform_sa_impersonate_permissions" {
-
-  service_account_id = "projects/${var.project_id}/serviceAccounts/${var.terraform_sa_email}"
-  role               = "roles/iam.serviceAccountTokenCreator"
-  member             = "serviceAccount:${var.project_number}@cloudbuild.gserviceaccount.com"
-}
-
-/***********************************************
-  Google Analytics Clickstream Collector
- ***********************************************/
-
-#module "gacollector_function" {
-#   suffix               = random_id.suffix.hex
-#   source               = "./modules/function"
-#   project              = var.project_id
-#   function_name        = "ga-collector"
-#   function_entry_point = "app"
-#}

@@ -62,3 +62,12 @@ output "segment_sa_key" {
   description = "Bucket used to store Segment events."
   value       = google_storage_bucket.segment_bucket[0].name
 }
+
+/******************************************
+  GARHits Cloud Function URL
+ ******************************************/
+ output "garhits_url" {
+  description = "URL for the GARhits Cloud Function. "
+  value       = module.garhits_function[0].trigger_url
+}
+

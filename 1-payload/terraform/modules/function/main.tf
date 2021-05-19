@@ -38,13 +38,14 @@ resource "google_project_service" "cf_api" {
 # Compress source code
 data "archive_file" "source" {
   type        = "zip"
-  source_dir  = local.root_dir
+  source_dir  = var.source_code
   output_path = "/tmp/function-${local.timestamp}.zip"
 }
 
 # Create bucket that will host the source code
 resource "google_storage_bucket" "function_bucket" {
   name = local.bucket_name
+  project = var.project
 }
 
 # Add source code zip to bucket
@@ -58,7 +59,9 @@ resource "google_storage_bucket_object" "zip" {
 # Create Cloud Function
 resource "google_cloudfunctions_function" "function" {
   name    = var.function_name
-  runtime = "nodejs12"
+  runtime = "nodejs14"
+  project = var.project
+  region  = var.region
 
   available_memory_mb   = 128
   source_archive_bucket = google_storage_bucket.function_bucket.name

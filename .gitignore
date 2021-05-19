@@ -38,3 +38,4 @@ override.tf.json
 # Comment these in your forked repository
 terraform.tfvars
 backend.tf
+**/cloudfunctions/garhits/index.js

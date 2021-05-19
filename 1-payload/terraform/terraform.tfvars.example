@@ -15,5 +15,12 @@ options = {
 		dataset_name 	= ""
 		bucket_name		= ""
 	}
+
+	garhits  = {
+		enable 			= false
+		topic		 	= ""
+		bucket_name		= ""
+		dataset_name	= ""
+	}
 }
 

@@ -21,7 +21,7 @@
  */
 
 locals {
-  bucket_name       = var.random_suffix == true ? format("%s-%s-%s", var.project_id, var.options.segment.bucket_name, random_id.suffix.hex) : format("%s-%s", var.project_id, var.options.segment.bucket_name)
+  segment_bucket_name       = var.random_suffix == true ? format("%s-%s-%s", var.project_id, var.options.segment.bucket_name, random_id.suffix.hex) : format("%s-%s", var.project_id, var.options.segment.bucket_name)
  }
 
 /***********************************************
@@ -52,7 +52,7 @@ resource "google_service_account_key" "terraform_sa_key" {
 resource "google_storage_bucket" "segment_bucket" {
   count                       = var.options.segment.enable == true ? (var.options.segment.bucket_name != "" ? 1 : 0) : 0
   project                     = var.project_id
-  name                        = local.bucket_name
+  name                        = local.segment_bucket_name
   location                    = var.region
   uniform_bucket_level_access = true
 }
